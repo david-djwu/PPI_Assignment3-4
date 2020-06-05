@@ -14,10 +14,7 @@
 #define PIXEL_PIN4    9
 #define BUTTON_PIN5   10
 #define PIXEL_PIN5    11
-//#include <LiquidCrystal.h>
-//LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
-//#include <LiquidCrystal_I2C.h>  //Include LCD library
-//LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
+
 
 int time = 10; //Define variable for timer and assign value which will be a time for a timer
 const int buzzer = 13; //Define a constant for a buzzer pin and assign 13 to it
@@ -83,13 +80,8 @@ void reset_routine()
 void welcome_routine()
 {
   digitalWrite(3, HIGH);     //First light is turned on.
-  //  lcd.clear();           //LCD is wiped out.
-  //  lcd.setCursor(0, 0);       //LCD cursor is set to upper left corner.
-  //  lcd.print("Welcome. Press"); //LCD displays welcome message.
-  //  lcd.setCursor(0, 1);       //LCD cursor is moved one line below.
-  //  lcd.print("button to start."); //Rest of message is displayed.
 
-  //Change also this for a sound to initiate sequence?
+  //sound to initiate sequence?
 
 
   while (stage == 1) {} //Loop to wait for button to be pressed. When button is pressed status "stage" is changed from 1 to 2.
@@ -97,7 +89,6 @@ void welcome_routine()
 
 void start_routine()
 {
-  //lcd.clear();          //LCD is cleared.
 
   // Change to speaker to start sequence
 
@@ -108,24 +99,20 @@ void start_routine()
     {
       digitalWrite(x, HIGH);
     }
-    //   lcd.setCursor(0, 0);    //LCD coursor is set to upper left corner.
     if (i == 0)       //First pass of loop
     {
-      //     lcd.print("Get ready"); //First message is displayed on LCD
-      //     Change to speaker to say Get Ready
+
+      //speaker to say Get Ready
     } else if (i == 1)
     { //Second pass of loop
-      //      lcd.print("Set");     //Second message is displayed on LCD
       //      Speaker to say "Set"
     } else if (i == 2)      //Third pass of loop
     {
-      //      lcd.print("GO");    //Third message is displayed on LCD
       //      Speaker to say GO
     }
     //    tone(buzzer, 500);      //Play sound on buzzer.
     //   delay(500);         //Hold sound on for 500msec.
     //    noTone(buzzer);       //Turn off sound.
-    //    lcd.clear();        //Clear LCD.
 
     //      Speaker to play sound
 
@@ -135,7 +122,6 @@ void start_routine()
     }
     delay(500);         //Wait 500msec.
   }
-  //  lcd.clear();            //Clear LCD.
   stage = 3;              //Set status "stage" to 3.
   score = 0;              //Reset score to 0.
   timer = time;             //Assign game time to timer
@@ -146,21 +132,11 @@ void start_routine()
 void play_routine()
 /*{
   prevMillis = millis();  //Capture current time
-  lcd.setCursor(0, 0);  //LCD cursor is set to upper left corner.
-  lcd.print("Time:");   //LCD displays message.
-  lcd.setCursor(10, 0);   //Move cursor to the right
-  lcd.print(timer);     //LCD displays timer value.
-  lcd.setCursor(0, 1);  //LCD cursor is moved one line below.
-  lcd.print("Score:");  //LCD displays message.
-  lcd.setCursor(10, 1);   //Move cursor to the right
-  lcd.print(score);     //LCD displays score value.
 */
-
-// LCD Screen stuff
 
 { while (timer > 0) //Repeat outer loop until timer value >0
   {
-    //The outer loop pass occures only at the begginig of the game
+    //The outer loop pass occures only at the begining of the game
     //when randomNumber is 0 and when the button is pressed when randomNumber has some value.
     if (randomNumber != 0)
     {
@@ -198,18 +174,7 @@ void play_routine()
       if (curMillis - prevMillis >= 1000) //1000 = 1sec
       {
         timer -= 1;           //update the time by counting down
-        /*        lcd.setCursor(0, 0);      //LCD cursor is set to upper left corner.
-                lcd.print("Time:");       //LCD displays message.
-                lcd.setCursor(10, 0);       //Move cursor to the right
-                lcd.print(String(timer)+" ");   //LCD displays timer value.
-                lcd.setCursor(0, 1);      //LCD cursor is moved one line below.
-                lcd.print("Score:");      //LCD displays message.
-                lcd.setCursor(10, 1);       //Move cursor to the right
-                lcd.print(score);         //LCD displays score value.
 
-        */
-
-        //LCD Screen Stuff
 
         prevMillis = prevMillis + 1000;
         //After 1 sec passes add 1 sec to the prevMillis
@@ -224,18 +189,10 @@ void finish_routine()
 {
   stage = 4;            //Set variable stage to 4
   digitalWrite(randomNumber, LOW); //Turn off the button which was last on
-  //  lcd.clear();          //LCD is cleared.
   tone(buzzer, 500);        //Send 1KHz sound signal.
   delay(100);           //Hold sound on for 100msec.
   noTone(buzzer);         //Turn off sound.
-  /*  lcd.setCursor(0, 0);      //LCD cursor is set to upper left corner.
-    lcd.print("Game Over.");    //LCD displays message.
-    lcd.setCursor(0, 1);      //LCD cursor is moved one line below.
-    lcd.print("Score:");      //LCD displays message.
-    lcd.setCursor(10, 1);       //Move cursor to the right
-    lcd.print(score);         //LCD displays score value.
 
-  */
 
   delay(3000);          //Wait for 3sec
   digitalWrite(3, HIGH);      //Light up the first button
