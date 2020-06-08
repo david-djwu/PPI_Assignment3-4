@@ -15,6 +15,9 @@
 #define BUTTON_PIN5   10
 #define PIXEL_PIN5    11
 
+const byte ledPin = 4
+const byte interruptPin = 2;
+volatile byte state = HIGH;
 
 int time = 10; //Define variable for timer and assign value which will be a time for a timer
 const int buzzer = 13; //Define a constant for a buzzer pin and assign 13 to it
@@ -31,16 +34,17 @@ void setup()
 {
   Serial.begin(9600);
 
-  pinMode(BUTTON_PIN1, INPUT_PULLUP);
-  pinMode(BUTTON_PIN2, INPUT_PULLUP);
+  pinMode(interruptPin, INPUT_PULLUP);
+  /*pinMode(BUTTON_PIN2, INPUT_PULLUP);
   pinMode(BUTTON_PIN3, INPUT_PULLUP);
   pinMode(BUTTON_PIN4, INPUT_PULLUP);
-  pinMode(BUTTON_PIN5, INPUT_PULLUP);
-  pinMode(PIXEL_PIN1, OUTPUT);
-  pinMode(PIXEL_PIN2, OUTPUT);
+  pinMode(BUTTON_PIN5, INPUT_PULLUP); */
+  pinMode(ledPin, OUTPUT);
+ /* pinMode(PIXEL_PIN2, OUTPUT);
   pinMode(PIXEL_PIN3, OUTPUT);
   pinMode(PIXEL_PIN4, OUTPUT);
   pinMode(PIXEL_PIN5, OUTPUT);
+  */
   
 /*  pinMode(3, OUTPUT);  //Set pin 3 as an output to light a diode 1 up
   pinMode(4, OUTPUT);  //Set pin 4 as an output to light a diode 2 up
