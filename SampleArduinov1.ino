@@ -1,214 +1,126 @@
 #include <Adafruit_NeoPixel.h>
-#define BUTTON_PIN1   2    // Digital IO pin connected to the button.  This will be
-                          // driven with a pull-up resistor so the switch should
-                          // pull the pin to ground momentarily.  On a high -> low
-                          // transition the button press logic will execute.
- 
-#define PIXEL_PIN1    3    // Digital IO pin connected to the NeoPixels.
-#define PIXEL_COUNT 60
-#define BUTTON_PIN2   4
-#define PIXEL_PIN2    5
-#define BUTTON_PIN3   6
-#define PIXEL_PIN3    7
-#define BUTTON_PIN4   8
-#define PIXEL_PIN4    9
-#define BUTTON_PIN5   10
-#define PIXEL_PIN5    11
+
+int buttonpins [] = {2,3,4,6,7};
+int ledpins [] = {2,3,4,5,6,7};
+int buzzer = 8;
+int gamelevel = 1;
+int ledsequence[20];
+int buttonsequence[20];
+int delayvalue = 1000;
 
 
-const byte interruptPin = 2;
-const byte ledPin = 3;
-volatile byte state = HIGH;
-
-int time = 10; //Define variable for timer and assign value which will be a time for a timer
-const int buzzer = 13; //Define a constant for a buzzer pin and assign 13 to it
-unsigned long prevMillis; //Storage for time value
-int timer; //Timer for a game
-short int i;
-int score = 0; //Score holder
-short int generateNextNum = 0; //Flag to generate next random number
-volatile int stage = 1; //Stage of a game
-short int randomNumber = 0; //Random number
-
-//This is the function that runs once after Arduino is turned on.
-void setup()
-{
+void setup() {
   Serial.begin(9600);
+  pinMode(buzzer, OUTPUT);
+  noTone(buzzer);
 
-  pinMode(interruptPin, INPUT_PULLUP);
-  pinMode(4, INPUT_PULLUP);
-  pinMode(5, INPUT_PULLUP);
-  pinMode(6, INPUT_PULLUP);
-  pinMode(7, INPUT_PULLUP);
-  pinMode(ledPin, OUTPUT);
-  pinMode(4, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(11, OUTPUT);
-  
-  
-/*  pinMode(3, OUTPUT);  //Set pin 3 as an output to light a diode 1 up
-  pinMode(4, OUTPUT);  //Set pin 4 as an output to light a diode 2 up
-  pinMode(5, OUTPUT);  //Set pin 5 as an output to light a diode 3 up
-  pinMode(6, OUTPUT);  //Set pin 6 as an output to light a diode 4 up
-  pinMode(7, OUTPUT);  //Set pin 67 as an output to light a diode 5 up
-  pinMode(buzzer, OUTPUT);  //Set buzzer pin 13 as an output
-  pinMode(2, INPUT); //Set pin 2 as an input for signals from buttons
-   pinMode(3, INPUT);
-    pinMode(4, INPUT);
-    pinMode(5, INPUT);
-    pinMode(6, INPUT);
-    pinMode(7, INPUT);*/
-
-  //Set interruption to pin 2 on rising signal and trigger reset routine function
-  attachInterrupt(digitalPinToInterrupt(2), reset_routine, RISING);
 }
 
-//This function is attached to interrupt and is triggered everytime any button is pressed.
-void reset_routine()
-{
-  if (stage == 1)
-  {
-    //When button is pressed during welcome routine the value of status "stage" is changed from 1 to 2
-    //and the program breaks a while loop in welcome_routine, then continues with start_routine function
-    stage = 2;
-  } else if (stage == 3)
-  {
-    generateNextNum = 1; //Set flag for program to generate random number
-    digitalWrite(randomNumber, LOW); //Turn off the light with random number
-  } else if (stage == 4)
-  {
-    stage = 1;
+void loop() {
+  Serial.print("Starting Level: ");
+  Serial.println(gamelevel);
+  startgame();
+  for (int i=0; i < 6; i++) {
+    ledsequence[i] = randomiseLED();
+    Serial.print("LED Value: ");
+    Serial.println(ledsequence[i]);
   }
-}
-//This is the first function running in the program.
-void welcome_routine()
-{
-  digitalWrite(3, HIGH);     //First light is turned on.
-
-  //sound to initiate sequence?
-
-
-  while (stage == 1) {} //Loop to wait for button to be pressed. When button is pressed status "stage" is changed from 1 to 2.
-}
-
-void start_routine()
-{
-
-  // Change to speaker to start sequence
-
-
-  for (i = 0; i <= 2; i++)  //Loop with 3 passes
-  {
-    for (int x = 3; x <= 7; x++) //Turned on all lights.
-    {
-      digitalWrite(x, HIGH);
-    }
-    if (i == 0)       //First pass of loop
-    {
-
-      //speaker to say Get Ready
-    } else if (i == 1)
-    { //Second pass of loop
-      //      Speaker to say "Set"
-    } else if (i == 2)      //Third pass of loop
-    {
-      //      Speaker to say GO
-    }
-    //    tone(buzzer, 500);      //Play sound on buzzer.
-    //   delay(500);         //Hold sound on for 500msec.
-    //    noTone(buzzer);       //Turn off sound.
-
-    //      Speaker to play sound
-
-    for (int x = 3; x <= 7; x++) //Turned off all lights.
-    {
-      digitalWrite(x, LOW);
-    }
-    delay(500);         //Wait 500msec.
+  checkinput();
+  if (delayvalue > 100) {
+    delayvalue -= 100;
   }
-  stage = 3;              //Set status "stage" to 3.
-  score = 0;              //Reset score to 0.
-  timer = time;             //Assign game time to timer
-  randomNumber = 0;           //Assign 0 to random number
+  gamelevel++;
+  delay(1000);
 }
 
-//This function is the actual
-void play_routine()
-/*{
-  prevMillis = millis();  //Capture current time
-*/
+int randomiseLED() {
+  randomSeed(millis());
+  int LED = random(5);
+  if (LED ==0) {
+    digitalWrite(ledpins[0], 1);
+    delay(delayvalue);
+    digitalWrite(ledpins[0], 0);
+    delay(delayvalue);
+    return 0;
+  } else if (LED == 1){
+    digitalWrite(ledpins[1], 0);
+    delay(delayvalue);
+    return 1;
+  } else {
+    digitalWrite(ledpins[2], 1);
+    delay(delayvalue);
+    digitalWrite(ledpins[2], 0);
+    delay(delayvalue);
+    return 2; }
+}
 
-{ while (timer > 0) //Repeat outer loop until timer value >0
-  {
-    //The outer loop pass occures only at the begining of the game
-    //when randomNumber is 0 and when the button is pressed when randomNumber has some value.
-    if (randomNumber != 0)
-    {
-      //That's why we need to check if it's 0 then skip adding a score
-      //otherwise increase the score.
-      score = score + 1;
-    }
-    //Assign random number to the storage so that
-    //a new value can be generated and compared with the old one.
-    int randomNumberOld = randomNumber;
+void checkinput() {
+  for (int x = 0; x < gamelevel;) {
+    if (digitalRead(buttonpins[0]) == 1) {
+      buttonsequence[x] = 0;
+      digitalWrite(ledpins[0], 1);
+      delay(200);
+      digitalWrite(ledpins[0], 0);
+      delay(200);
+      if (buttonsequence[x] != ledsequence[x]) {
+        fail(); }
+        x++; }
+        if (digitalRead(buttonpins[1]) ==1) {
+          buttonsequence[x] = 1;
+          digitalWrite(ledpins[1], 1);
+          delay(200);
+          digitalWrite(ledpins[1], 0);
+          delay(200);
+          if (buttonsequence[x] != ledsequence[x]) {
+            fail(); }
+            x++; }
+            if (digitalRead(buttonpins[2]) == 1) {
+              buttonsequence[x] = 2;
+              digitalWrite(ledpins[2], 1);
+              delay(200);
+              digitalWrite(ledpins[2], 0);
+              delay(200);
+              if (buttonsequence[x] != ledsequence[x]) {
+                fail(); }
+                x++; }
+  }}
 
-    //WHILE is used instead of IF to avoid the same random number,
-    //if new generated random number is the same then loop will continue
-    while (randomNumberOld == randomNumber)
-    {
-      randomNumber = random(3, 8); //Generate random number between 3 and 7, assign it to variable
-    }
-    //Light up the button with a random number
-    digitalWrite(randomNumber, HIGH);
+  void fail() {
 
-    //Set the flag to generate random number to false, the flag is set to true
-    //only when the correct button is pressed.
-    generateNextNum = 0;
-
-    //This inner loop updates the time and the score,
-    //when the correct button is pressed then generateNextNum is set to true,
-    //the loop breaks and the outer loop continues, if until the
-    //button is pressed the inner loop continues so we need to check timer in it
-    while (generateNextNum == 0 && timer > 0)
-    {
-      unsigned long curMillis = millis(); //Assignes current time to curMillis variable
-
-      //Compares the time at the begging of the outer loop to the time in the inner loop
-      //if 1 sec passed then it updates the timer
-      if (curMillis - prevMillis >= 1000) //1000 = 1sec
-      {
-        timer -= 1;           //update the time by counting down
-
-
-        prevMillis = prevMillis + 1000;
-        //After 1 sec passes add 1 sec to the prevMillis
-        //variable so that when we are subtracting the values above the max difference is 1 sec
-      }
-    }
+    Serial.println("Game Over");
+    digitalWrite(ledpins[0], 1);
+    digitalWrite(ledpins[1], 1);
+    digitalWrite(ledpins[2], 1);
+    delay(200);
+    tone(buzzer,1000);
+    delay(1000);
+    noTone(buzzer);
+    gamelevel = 0;
   }
-}
 
-//This function is executed when the time is over and the program waits for the player to start over
-void finish_routine()
-{
-  stage = 4;            //Set variable stage to 4
-  digitalWrite(randomNumber, LOW); //Turn off the button which was last on
-  tone(buzzer, 500);        //Send 1KHz sound signal.
-  delay(100);           //Hold sound on for 100msec.
-  noTone(buzzer);         //Turn off sound.
-
-
-  delay(3000);          //Wait for 3sec
-  digitalWrite(3, HIGH);      //Light up the first button
-  while (stage == 4) {}     //Loop until the button is pressed to start over
-}
-
-//This is the main program which is always running and looping after setup fuction finishes.
-void loop()
-{
-  welcome_routine();  //This is the first function triggered.
-  start_routine();    //This function is triggered when button is pressed during welcome_routine.
-  play_routine();   //This function is triggered automatically when start_routine finishes.
-  finish_routine();   //This function is triggered automatically when the game time is over.
+void startgame() {
+  Serial.println("Starting LEDS");
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(ledpins[0], HIGH);
+    digitalWrite(ledpins[1], LOW);
+    digitalWrite(ledpins[2], LOW);
+    delay(100);
+    digitalWrite(ledpins[0], LOW);
+    digitalWrite(ledpins[1], HIGH);
+    digitalWrite(ledpins[2], LOW);
+    delay(100);
+    digitalWrite(ledpins[0], LOW);
+    digitalWrite(ledpins[1], LOW);
+    digitalWrite(ledpins[2], HIGH);
+    delay(100);
+    digitalWrite(ledpins[0], HIGH);
+    digitalWrite(ledpins[1], HIGH);
+    digitalWrite(ledpins[2], HIGH);
+    delay(100);
+    digitalWrite(ledpins[0], LOW);
+    digitalWrite(ledpins[1], LOW);
+    digitalWrite(ledpins[2], LOW);
+    delay(100);
+  }
+  delay(1000);
 }
