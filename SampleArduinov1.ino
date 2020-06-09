@@ -15,8 +15,9 @@
 #define BUTTON_PIN5   10
 #define PIXEL_PIN5    11
 
-const byte ledPin1 = 4;
-const byte interruptPin1 = 2;
+
+const byte interruptPin = 2;
+const byte ledPin = 3;
 volatile byte state = HIGH;
 
 int time = 10; //Define variable for timer and assign value which will be a time for a timer
@@ -34,17 +35,17 @@ void setup()
 {
   Serial.begin(9600);
 
-  pinMode(interruptPin1, INPUT_PULLUP);
-  /*pinMode(BUTTON_PIN2, INPUT_PULLUP);
-  pinMode(BUTTON_PIN3, INPUT_PULLUP);
-  pinMode(BUTTON_PIN4, INPUT_PULLUP);
-  pinMode(BUTTON_PIN5, INPUT_PULLUP); */
-  pinMode(ledPin1, OUTPUT);
- /* pinMode(PIXEL_PIN2, OUTPUT);
-  pinMode(PIXEL_PIN3, OUTPUT);
-  pinMode(PIXEL_PIN4, OUTPUT);
-  pinMode(PIXEL_PIN5, OUTPUT);
-  */
+  pinMode(interruptPin, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
+  pinMode(5, INPUT_PULLUP);
+  pinMode(6, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(11, OUTPUT);
+  
   
 /*  pinMode(3, OUTPUT);  //Set pin 3 as an output to light a diode 1 up
   pinMode(4, OUTPUT);  //Set pin 4 as an output to light a diode 2 up
