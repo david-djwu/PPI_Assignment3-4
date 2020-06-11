@@ -1,6 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 
-int buttonpins [] = {2,3,4,6,7};
+*/int buttonpins [] = {2,3,4,6,7};
+*/
 int ledpins [] = {2,3,4,5,6,7};
 int buzzer = 8;
 int gamelevel = 1;
@@ -104,7 +105,7 @@ void startgame() {
     digitalWrite(ledpins[0], HIGH);
     digitalWrite(ledpins[1], LOW);
     digitalWrite(ledpins[2], LOW);
-    delay(100);
+ /*   delay(100);
     digitalWrite(ledpins[0], LOW);
     digitalWrite(ledpins[1], HIGH);
     digitalWrite(ledpins[2], LOW);
@@ -121,6 +122,7 @@ void startgame() {
     digitalWrite(ledpins[1], LOW);
     digitalWrite(ledpins[2], LOW);
     delay(100);
+    */
   }
   delay(1000);
 }
